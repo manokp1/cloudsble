@@ -1,0 +1,12 @@
+---
+
+- name: pull java
+  get_url:
+    url: http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.rpm 
+    dest: /tmp
+    headers: "Cookie: oraclelicense=accept-securebackup-cookie"
+  tags: java
+
+- name: install java
+  yum: name=/tmp/jdk-8u102-linux-x64.rpm state=present
+  tags: java

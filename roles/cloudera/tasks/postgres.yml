@@ -1,0 +1,40 @@
+---
+
+- name: init the postgresdb and start up
+  shell:  postgresql-setup initdb 
+  ignore_errors: yes
+  tags: master 
+
+- name: change listen addresses for postgresql
+  lineinfile: dest=/var/lib/pgsql/data/postgresql.conf regexp=^#listen_addresses line="listen_addresses = '*'"
+  tags: master
+#"
+
+- name: copy the sh pg_hba file
+  copy: src=../files/pg_hba.conf dest=/var/lib/pgsql/data force=yes owner=postgres
+  tags: master
+
+- name: start postgres service
+  service: name=postgresql state=restarted enabled=yes
+  tags: master
+
+- name: create databases
+  postgresql_db: name={{item.value.db}}
+  with_dict: '{{users}}'
+  become_user: postgres
+  tags: master
+
+- name: create users
+  postgresql_user: db={{item.value.db}} name={{item.key}} password={{item.value.password}}
+  with_dict: '{{users}}'
+  become_user: postgres
+  tags: master
+
+- name: run cloudera postgres script
+  shell: /usr/share/cmf/schema/scm_prepare_database.sh postgresql manager manager aKBnUz2ZMX
+  tags: master
+
+- name: remove old files
+  file: path=/etc/cloudera-scm-server/db.mgmt.properties state=absent
+  tags: master
+

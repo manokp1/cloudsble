@@ -1,0 +1,14 @@
+---
+
+users:
+  amon: #activity monitor
+    password: amon
+    db: amon
+  rman: # reports manager
+    password: rman
+    db: rman
+  manager:
+    password: aKBnUz2ZMX
+    db: manager
+
+

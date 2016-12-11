@@ -1,0 +1,35 @@
+--- 
+
+#PREREQS
+#- disable selinx
+#- change sudo_auth.. keys ot actual key, not vagrant
+#- change hosts file
+#- change server_host in config.ini
+#- change vars in default.yml
+#- before running this: ansible all -m ping
+
+- include: user.yml
+- include: dependencies.yml
+- include: java.yml
+- include: jython.yml
+- include: postgres.yml
+
+- name: copy config.ini
+  copy: src=../files/config.ini dest=/etc/cloudera-scm-agent/config.ini force=yes
+
+- name: copy hosts file
+  copy: src=../files/hosts dest=/etc/hosts force=yes
+
+- name: general recommended settings
+  shell: echo never > /sys/kernel/mm/transparent_hugepage/defrag && echo never > /sys/kernel/mm/transparent_hugepage/enabled && sysctl vm.swappiness=10
+
+- name: start cloudera agents
+  service: name=cloudera-scm-agent state=restarted enabled=yes
+  tags: restart
+
+- name: start cloudera master
+  service: name=cloudera-scm-server state=restarted
+  tags: master
+
+- include: specific.yml
+

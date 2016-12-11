@@ -1,0 +1,12 @@
+---
+
+- name: install cloudera hdfs
+  hosts: hdfs
+  become: yes
+  vars_files:
+    - ../roles/cloudera/vars/default.yml
+    - ../roles/cloudera/vars/id_rsa.yml
+    - ../roles/cloudera/vars/app_id_rsa.yml
+    - ../roles/cloudera/vars/postgres.yml
+  roles:
+    - cloudera

@@ -1,0 +1,21 @@
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+export JAVA_HOME=/usr/java/jdk1.8.0_102/
+export PATH=/usr/java/jdk1.8.0_102/jre/bin/:$PATH
+export CLASSPATH=$(find "/opt/cloudera/parcels/CDH/lib/hbase/" -name '*.jar' -printf '%p:' | sed 's/:$//')
+export CLASSPATH=$CLASSPATH:$(find "/opt/cloudera/parcels/CDH/lib/hadoop-hdfs/" -name '*.jar' -printf '%p:' | sed 's/:$//')
+export CLASSPATH=$CLASSPATH:$(find "/opt/cloudera/parcels/CDH/lib/hadoop/" -name '*.jar' -printf '%p:' | sed 's/:$//')
+export CLASSPATH=$CLASSPATH:/etc/hbase/conf/
+
+# add the source code dir to the pythonpath and jythonpath
+export PYTHONPATH=$PYTHONPATH:/home/app/git:/home/app/pyenv/lib/python2.7/site-packages
+export JYTHONPATH=$PYTHONPATH
+
+alias python=/home/app/pyenv/bin/python

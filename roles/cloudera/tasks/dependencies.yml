@@ -1,0 +1,47 @@
+---
+
+- name: set the yum repos
+  copy: src=../files/cloudera-manager.repo dest=/etc/yum.repos.d/ force=yes
+  tags: depends
+
+- name: update all packages
+  yum: name=* state=latest
+  tags: depends
+
+- name: install yum dependencies
+  yum: pkg={{item}} update_cache=yes state=present
+  with_items:
+    - ntp
+    - ntpdate 
+    - ntp-doc
+    - git
+    - python-setuptools
+    - python-devel
+    - "@Development tools"
+    - cloudera-manager-daemons
+    - cloudera-manager-agent
+  tags: depends
+
+- name: install master yum dependencies
+  yum: pkg={{item}} update_cache=yes state=present
+  with_items:
+    - postgresql-server
+    - postgresql-contrib
+    - postgresql-devel
+    - cloudera-manager-server
+  tags: master
+
+- name : start and enable ntpd on boot
+  shell:  chkconfig ntpd on; systemctl start ntpd; hwclock --systohc
+
+- easy_install: name=pip state=latest
+  tags: depends
+
+- name: install pip dependencies
+  pip: name={{item}}
+  with_items:
+    - virtualenv
+    - psycopg2
+  tags: depends
+
+

@@ -1,0 +1,27 @@
+---
+
+- name: clone git code
+  git: repo=https://github.com/privateducky/hdfs.git dest=/home/{{user}}/git
+  become_user: "{{user}}"
+
+- name: install virtual environment
+  pip: requirements=/home/{{user}}/git/app/requirements.txt virtualenv=/home/{{user}}/pyenv
+  become_user: "{{user}}"
+
+## patch
+
+- name: push up new bashrc for app user
+  copy: src=../files/bashrc dest=/home/app/.bashrc force=yes
+  become_user: "{{user}}"
+
+- name: delete remote-jython.sh
+  shell: rm /home/app/remote-jython.sh
+  become_user: "{{user}}"
+
+- name: copy new jython script
+  shell: cp /home/app/git/env/dev_remote_jython /home/app/remote-jython.sh && chmod +x /home/app/remote-jython.sh
+  become_user: "{{user}}"
+
+- name: change jython perms
+  shell: sudo chown app:app /opt/jython-2.7.0/ -R
+

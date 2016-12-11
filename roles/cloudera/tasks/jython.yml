@@ -1,0 +1,27 @@
+---
+
+- name: checking for jython install...
+  stat: path=/opt/jython-2.7.0
+  register: jython_stat
+  tags: jython
+
+- name: copying jython installer to /opt
+  when: jython_stat.stat.isdir is not defined
+  copy: src=../files/jython-installer-2.7.0.jar dest=/opt force=yes
+  tags: jython
+
+- name: installing jython
+  when: jython_stat.stat.isdir is not defined
+  shell: java -jar '/opt/jython-installer-2.7.0.jar' -s -d '/opt/jython-2.7.0'
+  tags: jython
+
+- name: linking /opt/jython...
+  when: jython_stat.stat.isdir is not defined
+  file: src='/opt/jython-2.7.0' dest='/opt/jython' state=link owner={{user}} group={{user}}
+  tags: jython
+
+- name: include jython in the default path and set JYTHON_HOME, JYTHON_OPTS...
+  when: jython_stat.stat.isdir is not defined
+  copy: src=../files/jython.sh dest=/etc/profile.d/jython.sh mode=644
+  tags: jython
+

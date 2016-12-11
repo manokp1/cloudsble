@@ -1,0 +1,12 @@
+---
+
+- name: create non-sudo user
+  user: name={{user}}
+  tags: user
+
+- name: copy bashrc
+  copy: src=../files/bashrc dest=/home/{{user}}/.bashrc force=yes
+  become_user: '{{user}}'
+  tags: user
+
+
